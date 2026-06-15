@@ -1,22 +1,22 @@
 # AlphaNestAgent
 
-AlphaNestAgent 是一个面向美股市场的智能投资研究 Agent，主要用于辅助用户发现交易机会、跟踪关键市场事件，并结合量化分析能力提升投资决策效率。
+AlphaNestAgent is an intelligent investment research agent for the U.S. stock market. It helps users discover potential market opportunities, track key events, and improve research efficiency with quantitative analysis capabilities.
 
-## 主要功能
+## Key Features
 
-1. 智能推荐股票
-   - 基于市场数据、公司基本面、热点事件和用户偏好，辅助筛选具有关注价值的股票标的。
-   - 支持围绕不同行业、主题、风险偏好和投资周期生成候选股票清单。
+1. Intelligent Stock Recommendations
+   - Screens stocks with potential research value based on market data, company fundamentals, trending events, and user preferences.
+   - Supports candidate stock lists across different sectors, themes, risk profiles, and investment horizons.
 
-2. 挖掘未来三个月美股市场机会
-   - 跟踪未来三个月内可能影响美股走势的重要事件。
-   - 重点关注公司财报、联储议息会议、非农就业数据、PPI/CPI 通胀数据等关键宏观与基本面催化因素。
-   - 辅助识别潜在的事件驱动机会、风险窗口和市场情绪变化。
+2. U.S. Market Opportunity Tracking for the Next Three Months
+   - Tracks major events that may affect U.S. equity markets over the next three months.
+   - Focuses on key macro and fundamental catalysts, including company earnings, Federal Reserve meetings, nonfarm payrolls, and PPI/CPI inflation data.
+   - Helps identify potential event-driven opportunities, risk windows, and shifts in market sentiment.
 
-3. 量化功能
-   - 支持基于历史行情、技术指标、因子数据和策略规则进行量化分析。
-   - 可用于策略回测、信号生成、风险评估和组合筛选等研究场景。
+3. Quantitative Analysis
+   - Supports quantitative analysis based on historical prices, technical indicators, factor data, and strategy rules.
+   - Can be used for strategy backtesting, signal generation, risk assessment, and portfolio screening.
 
-## 风险提示
+## Risk Disclaimer
 
-本项目输出内容仅用于投资研究和信息参考，不构成任何投资建议。股票市场存在风险，实际投资决策应结合个人风险承受能力并独立判断。
+The output of this project is for investment research and informational purposes only. It does not constitute financial advice. Stock market investing involves risk, and all investment decisions should be made independently based on personal risk tolerance.
