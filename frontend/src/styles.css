@@ -32,7 +32,7 @@ select {
 }
 
 .workspace {
-  width: min(1040px, 100%);
+  width: min(1320px, 100%);
   min-height: calc(100vh - 56px);
   margin: 0 auto;
   display: grid;
@@ -276,7 +276,7 @@ select {
   min-height: 0;
   padding: 22px 24px;
   display: grid;
-  grid-template-columns: minmax(280px, 0.92fr) minmax(0, 1.45fr);
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.65fr);
   gap: 18px;
   overflow: auto;
 }

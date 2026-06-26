@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <rect width="1200" height="720" fill="#edf3f5"/>
+  <rect x="120" y="36" width="960" height="648" rx="10" fill="#fff" stroke="#d8dee4"/>
+  <text x="150" y="82" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#172026">AlphaNestAgent</text>
+  <text x="150" y="110" font-family="Arial, sans-serif" font-size="17" fill="#61717d">US stock research assistant</text>
+  <rect x="790" y="52" width="74" height="42" rx="7" fill="#245c6b"/>
+  <text x="810" y="79" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#fff">Macro</text>
+  <line x1="120" y1="132" x2="1080" y2="132" stroke="#d8dee4"/>
+  <text x="150" y="164" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#61717d">INTERVAL</text>
+  <rect x="150" y="176" width="200" height="42" rx="6" fill="#fff" stroke="#cbd4dc"/>
+  <text x="168" y="202" font-family="Arial, sans-serif" font-size="16" fill="#172026">Monthly</text>
+  <rect x="912" y="176" width="70" height="42" rx="6" fill="#fff" stroke="#245c6b"/>
+  <text x="933" y="202" font-family="Arial, sans-serif" font-size="16" fill="#245c6b">Back</text>
+  <rect x="992" y="176" width="74" height="42" rx="6" fill="#fff" stroke="#245c6b"/>
+  <text x="1007" y="202" font-family="Arial, sans-serif" font-size="16" fill="#245c6b">Refresh</text>
+  <line x1="120" y1="236" x2="1080" y2="236" stroke="#d8dee4"/>
+  <rect x="150" y="264" width="290" height="66" rx="8" fill="#fff" stroke="#d8dee4"/>
+  <text x="170" y="290" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#61717d">SOURCE</text>
+  <text x="170" y="316" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#172026">alpha_vantage</text>
+  <rect x="456" y="264" width="290" height="66" rx="8" fill="#fff" stroke="#d8dee4"/>
+  <text x="476" y="290" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#61717d">ROWS SHOWN</text>
+  <text x="476" y="316" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#172026">119</text>
+  <rect x="762" y="264" width="304" height="66" rx="8" fill="#fff" stroke="#d8dee4"/>
+  <text x="782" y="290" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#61717d">LATEST</text>
+  <text x="782" y="316" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#172026">335.123 (2026-05-01)</text>
+  <rect x="150" y="354" width="916" height="304" rx="8" fill="#fff" stroke="#d8dee4"/>
+  <text x="172" y="394" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#172026">CPI</text>
+  <text x="172" y="420" font-family="Arial, sans-serif" font-size="15" fill="#61717d">Historical macro indicator trend</text>
+  <line x1="250" y1="590" x2="980" y2="590" stroke="#e5eaee"/>
+  <line x1="250" y1="520" x2="980" y2="520" stroke="#e5eaee"/>
+  <line x1="250" y1="450" x2="980" y2="450" stroke="#e5eaee"/>
+  <path d="M250 578 L330 560 L410 548 L490 535 L570 500 L650 456 L730 430 L810 408 L900 392 L980 360 L980 590 L250 590 Z" fill="#2f8c8f" opacity="0.16"/>
+  <path d="M250 578 L330 560 L410 548 L490 535 L570 500 L650 456 L730 430 L810 408 L900 392 L980 360" fill="none" stroke="#2f8c8f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="980" cy="360" r="9" fill="#fff" stroke="#2f8c8f" stroke-width="5"/>
+</svg>
