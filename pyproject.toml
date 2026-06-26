@@ -5,8 +5,10 @@ description = "An intelligent investment research agent for U.S. stock market op
 readme = "Readme.md"
 requires-python = ">=3.11"
 dependencies = [
+    "pandas>=3.0.3",
     "pydantic-ai",
     "python-dotenv",
+    "yfinance>=1.4.1",
 ]
 
 [build-system]
@@ -14,4 +16,4 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-py-modules = ["agentMain", "tools"]
+py-modules = ["agent_core", "agent_cli", "agent_web_api", "tools"]
