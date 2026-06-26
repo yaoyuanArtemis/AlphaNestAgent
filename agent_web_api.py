@@ -9,7 +9,7 @@ from urllib.parse import parse_qs, urlparse
 from pydantic_ai.messages import ModelMessage
 
 from agent_core import format_api_error, run_agent
-from tools import economic_indicator
+from tools import economic_indicator, futu_watchlist, stock_recommendations
 
 HOST = "127.0.0.1"
 PORT = 8000
@@ -50,6 +50,14 @@ class AgentRequestHandler(BaseHTTPRequestHandler):
 
         if path == "/macro":
             self._handle_macro(parsed_url.query)
+            return
+
+        if path == "/recommendations":
+            self._handle_recommendations(parsed_url.query)
+            return
+
+        if path == "/futu/watchlist":
+            self._handle_futu_watchlist(parsed_url.query)
             return
 
         self._send_json(404, {"error": "Not found"})
@@ -122,11 +130,52 @@ class AgentRequestHandler(BaseHTTPRequestHandler):
 
         self._send_json(200, result)
 
+    def _handle_recommendations(self, query: str) -> None:
+        params = parse_qs(query)
+        theme = params.get("theme", ["all"])[0]
+        risk = params.get("risk", ["all"])[0]
+        horizon = params.get("horizon", ["3m"])[0]
+        style = params.get("style", ["growth"])[0]
+        source = params.get("source", ["prototype"])[0]
+        futu_group = params.get("futu_group", [""])[0]
+
+        try:
+            limit = int(params.get("limit", ["10"])[0])
+        except ValueError:
+            limit = 10
+
+        result = stock_recommendations(
+            theme=theme,
+            risk=risk,
+            horizon=horizon,
+            style=style,
+            limit=limit,
+            source=source,
+            futu_group=futu_group,
+        )
+        if "error_type" in result:
+            self._send_json(400, {"error": result})
+            return
+
+        self._send_json(200, result)
+
+    def _handle_futu_watchlist(self, query: str) -> None:
+        params = parse_qs(query)
+        group_name = params.get("group_name", [""])[0]
+        group_type = params.get("group_type", ["ALL"])[0]
+
+        result = futu_watchlist(group_name=group_name, group_type=group_type)
+        if "error_type" in result:
+            self._send_json(400, {"error": result})
+            return
+
+        self._send_json(200, result)
+
 
 def main() -> None:
     server = ThreadingHTTPServer((HOST, PORT), AgentRequestHandler)
     print(f"AlphaNestAgent API running at http://{HOST}:{PORT}")
-    print("Endpoints: GET /health, POST /chat, POST /reset")
+    print("Endpoints: GET /health, GET /macro, GET /recommendations, GET /futu/watchlist, POST /chat, POST /reset")
     server.serve_forever()
 
 

@@ -63,6 +63,39 @@ const MACRO_INDICATORS = [
   },
 ];
 
+const RECOMMENDATION_FILTERS = {
+  source: [
+    { value: "prototype", label: "Prototype" },
+    { value: "futu", label: "Futu Watchlist" },
+  ],
+  theme: [
+    { value: "all", label: "All" },
+    { value: "ai", label: "AI" },
+    { value: "semiconductor", label: "Semiconductor" },
+    { value: "space", label: "Space" },
+    { value: "biotech", label: "Biotech" },
+    { value: "energy", label: "Energy" },
+  ],
+  risk: [
+    { value: "all", label: "All Risk" },
+    { value: "low", label: "Low" },
+    { value: "medium", label: "Medium" },
+    { value: "high", label: "High" },
+  ],
+  horizon: [
+    { value: "3m", label: "3M" },
+    { value: "6m", label: "6M" },
+    { value: "12m", label: "12M" },
+  ],
+  style: [
+    { value: "growth", label: "Growth" },
+    { value: "quality", label: "Quality" },
+    { value: "momentum", label: "Momentum" },
+    { value: "event-driven", label: "Event-driven" },
+    { value: "value", label: "Value" },
+  ],
+};
+
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const QUADRUPLE_WITCHING_MONTHS = [2, 5, 8, 11];
 const MACRO_INDICATOR_BY_SLUG = new Map(
@@ -81,6 +114,10 @@ function readRouteFromLocation() {
     return { activeTab: "chat", indicator: null };
   }
 
+  if (section === "recommendations") {
+    return { activeTab: "recommendations", indicator: null };
+  }
+
   if (section === "macro") {
     return {
       activeTab: "macro",
@@ -94,6 +131,10 @@ function readRouteFromLocation() {
 function getRouteHash(route) {
   if (route.activeTab === "chat") {
     return "#/chat";
+  }
+
+  if (route.activeTab === "recommendations") {
+    return "#/recommendations";
   }
 
   if (route.indicator) {
@@ -307,6 +348,13 @@ function App() {
                 Macro
               </button>
               <button
+                className={activeTab === "recommendations" ? "tab tab-active" : "tab"}
+                type="button"
+                onClick={() => navigate({ activeTab: "recommendations", indicator: null })}
+              >
+                Recommendations
+              </button>
+              <button
                 className={activeTab === "chat" ? "tab tab-active" : "tab"}
                 type="button"
                 onClick={() => navigate({ activeTab: "chat", indicator: null })}
@@ -362,6 +410,8 @@ function App() {
               </button>
             </form>
           </>
+        ) : activeTab === "recommendations" ? (
+          <RecommendationsPanel />
         ) : (
           <MacroPanel
             indicator={route.indicator}
@@ -372,6 +422,207 @@ function App() {
         )}
       </section>
     </main>
+  );
+}
+
+function RecommendationsPanel() {
+  const [filters, setFilters] = useState({
+    source: "futu",
+    theme: "all",
+    risk: "all",
+    horizon: "3m",
+    style: "growth",
+  });
+  const [recommendationData, setRecommendationData] = useState(null);
+  const [selectedSymbol, setSelectedSymbol] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    loadRecommendations();
+  }, [filters]);
+
+  async function loadRecommendations() {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const params = new URLSearchParams({
+        ...filters,
+        limit: "10",
+      });
+      const response = await fetch(`${API_URL}/recommendations?${params.toString()}`);
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(JSON.stringify(payload.error ?? payload, null, 2));
+      }
+
+      setRecommendationData(payload);
+      setSelectedSymbol((currentSymbol) => {
+        const stillExists = payload.recommendations?.some((item) => item.symbol === currentSymbol);
+        return stillExists ? currentSymbol : payload.recommendations?.[0]?.symbol ?? "";
+      });
+    } catch (requestError) {
+      setRecommendationData(null);
+      setSelectedSymbol("");
+      setError(requestError.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function updateFilter(name, value) {
+    setFilters((current) => ({ ...current, [name]: value }));
+  }
+
+  const recommendations = recommendationData?.recommendations ?? [];
+  const selectedRecommendation =
+    recommendations.find((item) => item.symbol === selectedSymbol) ?? recommendations[0] ?? null;
+
+  return (
+    <section className="recommendations-panel">
+      <div className="recommendations-toolbar">
+        <div className="recommendations-heading">
+          <span>Research candidates</span>
+          <strong>Intelligent stock recommendations</strong>
+        </div>
+
+        <button className="secondary-button" type="button" onClick={loadRecommendations}>
+          Refresh
+        </button>
+      </div>
+
+      <div className="recommendation-filters">
+        {Object.entries(RECOMMENDATION_FILTERS).map(([name, options]) => (
+          <div className="filter-group" key={name}>
+            <span>{name}</span>
+            <div>
+              {options.map((option) => (
+                <button
+                  className={filters[name] === option.value ? "filter-chip filter-chip-active" : "filter-chip"}
+                  key={option.value}
+                  type="button"
+                  onClick={() => updateFilter(name, option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="recommendations-content">
+        {isLoading && <div className="state-box">Loading recommendations...</div>}
+        {error && <div className="state-box state-error">Request failed: {error}</div>}
+
+        {!isLoading && !error && (
+          <>
+            <div className="recommendation-list">
+              {recommendations.length === 0 ? (
+                <div className="state-box">No candidates match the current filters.</div>
+              ) : (
+                recommendations.map((stock) => (
+                  <button
+                    className={
+                      selectedRecommendation?.symbol === stock.symbol
+                        ? "recommendation-card recommendation-card-active"
+                        : "recommendation-card"
+                    }
+                    key={stock.symbol}
+                    type="button"
+                    onClick={() => setSelectedSymbol(stock.symbol)}
+                  >
+                    <div className="recommendation-card-top">
+                      <div>
+                        <strong>{stock.symbol}</strong>
+                        <span>{stock.name}</span>
+                      </div>
+                      <div className="score-pill">{stock.score}</div>
+                    </div>
+                    <div className="recommendation-tags">
+                      {stock.themes.map((theme) => (
+                        <span key={theme}>{theme}</span>
+                      ))}
+                      <span>{stock.risk} risk</span>
+                    </div>
+                    <p>{stock.thesis}</p>
+                  </button>
+                ))
+              )}
+            </div>
+
+            {selectedRecommendation && <RecommendationDetail stock={selectedRecommendation} />}
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function RecommendationDetail({ stock }) {
+  const breakdownEntries = Object.entries(stock.breakdown ?? {});
+
+  return (
+    <article className="recommendation-detail">
+      <div className="recommendation-detail-header">
+        <div>
+          <span>{stock.sector}</span>
+          <strong>
+            {stock.symbol} · {stock.name}
+          </strong>
+          <p>{stock.thesis}</p>
+        </div>
+        <div className="recommendation-score">
+          <span>Score</span>
+          <strong>{stock.score}</strong>
+        </div>
+      </div>
+
+      <div className="score-breakdown">
+        {breakdownEntries.map(([name, value]) => (
+          <div className="score-row" key={name}>
+            <div>
+              <span>{name}</span>
+              <strong>{value}</strong>
+            </div>
+            <div className="score-bar">
+              <div style={{ width: `${value}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="recommendation-detail-grid">
+        <section>
+          <h3>Why It Appears</h3>
+          <ul>
+            {stock.reasons.map((reason) => (
+              <li key={reason}>{reason}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <h3>Key Risks</h3>
+          <ul>
+            {stock.risks.map((risk) => (
+              <li key={risk}>{risk}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <h3>Upcoming Watch Items</h3>
+          <div className="event-chip-row">
+            {stock.events.map((event) => (
+              <span key={event}>{event}</span>
+            ))}
+          </div>
+        </section>
+      </div>
+    </article>
   );
 }
 

@@ -5,6 +5,7 @@ description = "An intelligent investment research agent for U.S. stock market op
 readme = "Readme.md"
 requires-python = ">=3.11"
 dependencies = [
+    "futu-api>=10.8.6808",
     "pandas>=3.0.3",
     "pydantic-ai",
     "python-dotenv",

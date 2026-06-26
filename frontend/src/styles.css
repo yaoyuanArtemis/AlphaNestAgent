@@ -203,6 +203,310 @@ select {
   min-width: 88px;
 }
 
+.recommendations-panel {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  background: #fbfcfd;
+}
+
+.recommendations-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #d8dee4;
+}
+
+.recommendations-heading span,
+.filter-group > span {
+  color: #61717d;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.recommendations-heading strong {
+  display: block;
+  margin-top: 3px;
+  color: #172026;
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.recommendation-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #d8dee4;
+  background: #ffffff;
+}
+
+.filter-group {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.filter-group > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-chip {
+  min-height: 30px;
+  border: 1px solid #d8dee4;
+  border-radius: 999px;
+  padding: 0 11px;
+  color: #40515e;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.filter-chip-active {
+  border-color: #245c6b;
+  color: #ffffff;
+  background: #245c6b;
+}
+
+.recommendations-content {
+  min-height: 0;
+  padding: 22px 24px;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.92fr) minmax(0, 1.45fr);
+  gap: 18px;
+  overflow: auto;
+}
+
+.recommendation-list {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recommendation-card {
+  width: 100%;
+  border: 1px solid #d8dee4;
+  border-radius: 8px;
+  padding: 14px;
+  color: #172026;
+  text-align: left;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(24, 39, 52, 0.06);
+  cursor: pointer;
+}
+
+.recommendation-card-active {
+  border-color: #245c6b;
+  background: #e8f2f5;
+}
+
+.recommendation-card-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recommendation-card-top strong {
+  display: block;
+  color: #172026;
+  font-size: 21px;
+  line-height: 1.05;
+}
+
+.recommendation-card-top span {
+  display: block;
+  margin-top: 4px;
+  color: #61717d;
+  font-size: 13px;
+}
+
+.score-pill {
+  min-width: 46px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #ffffff;
+  text-align: center;
+  font-weight: 800;
+  background: #245c6b;
+}
+
+.recommendation-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.recommendation-tags span,
+.event-chip-row span {
+  border-radius: 5px;
+  padding: 4px 8px;
+  color: #0f5f3d;
+  background: #edf5f1;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.recommendation-card p {
+  margin: 12px 0 0;
+  color: #40515e;
+  font-size: 14px;
+  line-height: 1.42;
+}
+
+.recommendation-detail {
+  min-width: 0;
+  border: 1px solid #d8dee4;
+  border-radius: 8px;
+  padding: 18px;
+  background:
+    linear-gradient(135deg, rgba(47, 140, 143, 0.1), transparent 34%),
+    #ffffff;
+  box-shadow: 0 12px 34px rgba(24, 39, 52, 0.08);
+}
+
+.recommendation-detail-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.recommendation-detail-header span,
+.recommendation-score span {
+  color: #61717d;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.recommendation-detail-header strong {
+  display: block;
+  margin-top: 5px;
+  color: #172026;
+  font-size: 24px;
+  line-height: 1.12;
+}
+
+.recommendation-detail-header p {
+  max-width: 620px;
+  margin: 9px 0 0;
+  color: #40515e;
+  line-height: 1.48;
+}
+
+.recommendation-score {
+  min-width: 118px;
+  border: 1px solid #c7dde3;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.recommendation-score strong {
+  display: block;
+  margin-top: 3px;
+  color: #245c6b;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.score-breakdown {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.score-row {
+  border: 1px solid #edf0f2;
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.score-row > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.score-row span {
+  color: #61717d;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.score-row strong {
+  color: #172026;
+  font-size: 15px;
+}
+
+.score-bar {
+  height: 7px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #edf0f2;
+}
+
+.score-bar div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #245c6b, #7a8f2a);
+}
+
+.recommendation-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.recommendation-detail-grid section {
+  border: 1px solid #edf0f2;
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.recommendation-detail-grid section:last-child {
+  grid-column: 1 / -1;
+}
+
+.recommendation-detail-grid h3 {
+  margin: 0 0 10px;
+  color: #172026;
+  font-size: 15px;
+}
+
+.recommendation-detail-grid ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #40515e;
+  line-height: 1.48;
+}
+
+.recommendation-detail-grid li + li {
+  margin-top: 8px;
+}
+
+.event-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .macro-panel {
   min-height: 0;
   display: grid;
@@ -693,6 +997,9 @@ select {
   .topbar,
   .messages,
   .composer,
+  .recommendations-toolbar,
+  .recommendation-filters,
+  .recommendations-content,
   .indicator-board,
   .macro-toolbar,
   .macro-content {
@@ -706,9 +1013,30 @@ select {
   }
 
   .topbar-actions,
+  .recommendations-toolbar,
   .macro-toolbar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .recommendation-filters,
+  .recommendations-content,
+  .score-breakdown,
+  .recommendation-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recommendation-detail-header {
+    flex-direction: column;
+  }
+
+  .recommendation-score {
+    width: 100%;
+    text-align: left;
+  }
+
+  .recommendation-detail-grid section:last-child {
+    grid-column: auto;
   }
 
   .indicator-board-header {
