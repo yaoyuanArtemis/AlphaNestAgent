@@ -206,14 +206,146 @@ select {
 .macro-panel {
   min-height: 0;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
+}
+
+.macro-panel-index {
+  grid-template-rows: 1fr;
+}
+
+.indicator-board {
+  min-height: 0;
+  padding: 22px 24px;
+  overflow: auto;
+  background: #fbfcfd;
+}
+
+.indicator-board-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.indicator-board-header span {
+  color: #61717d;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.indicator-board-header strong {
+  color: #172026;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.indicator-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.indicator-card {
+  min-width: 0;
+  min-height: 188px;
+  border: 1px solid #d8dee4;
+  border-radius: 8px;
+  padding: 14px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 16px;
+  color: #172026;
+  text-align: left;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(24, 39, 52, 0.07);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.indicator-card:hover {
+  border-color: #c7dde3;
+  box-shadow: 0 14px 34px rgba(24, 39, 52, 0.11);
+  transform: translateY(-1px);
+}
+
+.indicator-card:focus-visible {
+  outline: 3px solid rgba(36, 92, 107, 0.24);
+  outline-offset: 3px;
+}
+
+.indicator-card-active {
+  border-color: #245c6b;
+  background:
+    linear-gradient(180deg, rgba(232, 242, 245, 0.72), rgba(255, 255, 255, 0.96)),
+    #ffffff;
+  box-shadow: 0 16px 38px rgba(36, 92, 107, 0.16);
+}
+
+.indicator-tags {
+  display: flex;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.indicator-tag {
+  border-radius: 5px;
+  padding: 3px 9px;
+  color: #0f5f3d;
+  background: #edf5f1;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.indicator-card-body strong {
+  display: block;
+  color: #172026;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.indicator-card-body p {
+  margin: 14px 0 0;
+  color: #40515e;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.indicator-card-footer {
+  margin: 0 -14px -14px;
+  border-top: 1px solid #edf0f2;
+  border-radius: 0 0 8px 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #4d5f6b;
+  background: #f7f8f8;
+  font-size: 12px;
+}
+
+.indicator-card-active .indicator-card-footer {
+  background: #e8f2f5;
+}
+
+.indicator-card-active .indicator-tag {
+  color: #ffffff;
+  background: #245c6b;
 }
 
 .macro-toolbar {
   display: flex;
   align-items: end;
   gap: 12px;
-  padding: 18px 24px;
+  padding: 14px 24px;
   border-bottom: 1px solid #d8dee4;
   background: #fbfcfd;
 }
@@ -239,6 +371,13 @@ select {
   padding: 0 10px;
   color: #172026;
   background: #ffffff;
+}
+
+.macro-toolbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .macro-content {
@@ -554,6 +693,7 @@ select {
   .topbar,
   .messages,
   .composer,
+  .indicator-board,
   .macro-toolbar,
   .macro-content {
     padding-left: 16px;
@@ -571,10 +711,29 @@ select {
     flex-direction: column;
   }
 
+  .indicator-board-header {
+    align-items: start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .indicator-card-grid {
+    grid-template-columns: 1fr;
+  }
+
   .tabs,
   .secondary-button,
   .macro-toolbar label {
     width: 100%;
+  }
+
+  .macro-toolbar-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .macro-toolbar-actions .secondary-button {
+    flex: 1;
   }
 
   .tab {

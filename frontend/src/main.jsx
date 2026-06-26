@@ -5,17 +5,112 @@ import "./styles.css";
 const API_URL = "http://127.0.0.1:8000";
 
 const MACRO_INDICATORS = [
-  { value: "CPI", label: "CPI" },
-  { value: "FEDERAL_FUNDS_RATE", label: "Federal Funds Rate" },
-  { value: "UNEMPLOYMENT", label: "Unemployment" },
-  { value: "NONFARM_PAYROLL", label: "Nonfarm Payroll" },
-  { value: "INFLATION", label: "Inflation" },
-  { value: "RETAIL_SALES", label: "Retail Sales" },
-  { value: "QUADRUPLE_WITCHING", label: "Quadruple Witching" },
+  {
+    value: "CPI",
+    label: "CPI",
+    description: "Consumer price index trend for inflation pressure.",
+    cadence: "Monthly",
+    source: "Alpha Vantage",
+    tags: ["Inflation", "Prices"],
+  },
+  {
+    value: "FEDERAL_FUNDS_RATE",
+    label: "Federal Funds Rate",
+    description: "Policy rate backdrop for liquidity and valuation risk.",
+    cadence: "Monthly",
+    source: "Alpha Vantage",
+    tags: ["Fed", "Rates"],
+  },
+  {
+    value: "UNEMPLOYMENT",
+    label: "Unemployment",
+    description: "Labor market slack and recession-cycle signal.",
+    cadence: "Monthly",
+    source: "Alpha Vantage",
+    tags: ["Labor", "Cycle"],
+  },
+  {
+    value: "NONFARM_PAYROLL",
+    label: "Nonfarm Payroll",
+    description: "Employment growth momentum for US macro demand.",
+    cadence: "Monthly",
+    source: "Alpha Vantage",
+    tags: ["Jobs", "Macro"],
+  },
+  {
+    value: "INFLATION",
+    label: "Inflation",
+    description: "Annual inflation series for long-range price trend.",
+    cadence: "Annual",
+    source: "Alpha Vantage",
+    tags: ["Inflation", "Annual"],
+  },
+  {
+    value: "RETAIL_SALES",
+    label: "Retail Sales",
+    description: "Consumer spending pulse across the US economy.",
+    cadence: "Monthly",
+    source: "Alpha Vantage",
+    tags: ["Consumer", "Demand"],
+  },
+  {
+    value: "QUADRUPLE_WITCHING",
+    label: "Quadruple Witching",
+    description: "Future quarterly expiration dates marked on calendars.",
+    cadence: "Quarterly",
+    source: "Calendar rule",
+    tags: ["Options", "Expiry"],
+  },
 ];
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const QUADRUPLE_WITCHING_MONTHS = [2, 5, 8, 11];
+const MACRO_INDICATOR_BY_SLUG = new Map(
+  MACRO_INDICATORS.map((item) => [item.value.toLowerCase().replaceAll("_", "-"), item.value]),
+);
+
+function getIndicatorSlug(value) {
+  return value.toLowerCase().replaceAll("_", "-");
+}
+
+function readRouteFromLocation() {
+  const route = window.location.hash.replace(/^#\/?/, "");
+  const [section, slug] = route.split("/");
+
+  if (section === "chat") {
+    return { activeTab: "chat", indicator: null };
+  }
+
+  if (section === "macro") {
+    return {
+      activeTab: "macro",
+      indicator: MACRO_INDICATOR_BY_SLUG.get(slug) ?? null,
+    };
+  }
+
+  return { activeTab: "macro", indicator: null };
+}
+
+function getRouteHash(route) {
+  if (route.activeTab === "chat") {
+    return "#/chat";
+  }
+
+  if (route.indicator) {
+    return `#/macro/${getIndicatorSlug(route.indicator)}`;
+  }
+
+  return "#/macro";
+}
+
+function writeRouteToLocation(route, replace = false) {
+  const nextHash = getRouteHash(route);
+  if (window.location.hash === nextHash) {
+    return;
+  }
+
+  window.history[replace ? "replaceState" : "pushState"]({}, "", nextHash);
+}
 
 function formatDateKey(date) {
   const year = date.getFullYear();
@@ -100,7 +195,7 @@ function createSessionId() {
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState("chat");
+  const [route, setRoute] = useState(() => readRouteFromLocation());
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -112,6 +207,30 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const sessionIdRef = useRef(createSessionId());
   const canSend = useMemo(() => input.trim().length > 0 && !isLoading, [input, isLoading]);
+  const activeTab = route.activeTab;
+
+  useEffect(() => {
+    if (!window.location.hash) {
+      writeRouteToLocation(route, true);
+    }
+
+    function syncRouteFromLocation() {
+      setRoute(readRouteFromLocation());
+    }
+
+    window.addEventListener("popstate", syncRouteFromLocation);
+    window.addEventListener("hashchange", syncRouteFromLocation);
+
+    return () => {
+      window.removeEventListener("popstate", syncRouteFromLocation);
+      window.removeEventListener("hashchange", syncRouteFromLocation);
+    };
+  }, []);
+
+  function navigate(nextRoute) {
+    setRoute(nextRoute);
+    writeRouteToLocation(nextRoute);
+  }
 
   async function sendMessage(event) {
     event.preventDefault();
@@ -181,18 +300,18 @@ function App() {
           <div className="topbar-actions">
             <nav className="tabs" aria-label="Primary views">
               <button
-                className={activeTab === "chat" ? "tab tab-active" : "tab"}
-                type="button"
-                onClick={() => setActiveTab("chat")}
-              >
-                Chat
-              </button>
-              <button
                 className={activeTab === "macro" ? "tab tab-active" : "tab"}
                 type="button"
-                onClick={() => setActiveTab("macro")}
+                onClick={() => navigate({ activeTab: "macro", indicator: null })}
               >
                 Macro
+              </button>
+              <button
+                className={activeTab === "chat" ? "tab tab-active" : "tab"}
+                type="button"
+                onClick={() => navigate({ activeTab: "chat", indicator: null })}
+              >
+                Chat
               </button>
             </nav>
             {activeTab === "chat" && (
@@ -244,23 +363,35 @@ function App() {
             </form>
           </>
         ) : (
-          <MacroPanel />
+          <MacroPanel
+            indicator={route.indicator}
+            onSelectIndicator={(nextIndicator) =>
+              navigate({ activeTab: "macro", indicator: nextIndicator })
+            }
+          />
         )}
       </section>
     </main>
   );
 }
 
-function MacroPanel() {
-  const [indicator, setIndicator] = useState("CPI");
+function MacroPanel({ indicator, onSelectIndicator }) {
   const [interval, setInterval] = useState("monthly");
   const [macroData, setMacroData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const hasSelectedIndicator = indicator !== null;
   const isQuadrupleWitching = indicator === "QUADRUPLE_WITCHING";
   const quadrupleWitchingEvents = useMemo(() => getFutureQuadrupleWitchingDates(8), []);
 
   useEffect(() => {
+    if (!hasSelectedIndicator) {
+      setMacroData(null);
+      setError("");
+      setIsLoading(false);
+      return;
+    }
+
     if (isQuadrupleWitching) {
       setMacroData(null);
       setError("");
@@ -272,6 +403,10 @@ function MacroPanel() {
   }, [indicator, interval]);
 
   async function loadMacroData() {
+    if (!hasSelectedIndicator) {
+      return;
+    }
+
     if (isQuadrupleWitching) {
       return;
     }
@@ -314,23 +449,21 @@ function MacroPanel() {
   );
   const intervalDisabled = indicator === "INFLATION" || isQuadrupleWitching;
   const latestPoint = chartRows.at(-1);
-  const selectedIndicatorLabel = MACRO_INDICATORS.find((item) => item.value === indicator)?.label ?? indicator;
+  const selectedIndicator = MACRO_INDICATORS.find((item) => item.value === indicator);
+  const selectedIndicatorLabel = selectedIndicator?.label ?? indicator;
   const nextWitchingEvent = quadrupleWitchingEvents[0];
+
+  if (!hasSelectedIndicator) {
+    return (
+      <section className="macro-panel macro-panel-index">
+        <IndicatorCardGrid onSelect={onSelectIndicator} />
+      </section>
+    );
+  }
 
   return (
     <section className="macro-panel">
       <div className="macro-toolbar">
-        <label>
-          <span>Indicator</span>
-          <select value={indicator} onChange={(event) => setIndicator(event.target.value)}>
-            {MACRO_INDICATORS.map((item) => (
-              <option value={item.value} key={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
         <label>
           <span>Interval</span>
           <select
@@ -344,9 +477,14 @@ function MacroPanel() {
           </select>
         </label>
 
-        <button className="secondary-button" type="button" onClick={loadMacroData} disabled={isQuadrupleWitching}>
-          Refresh
-        </button>
+        <div className="macro-toolbar-actions">
+          <button className="secondary-button" type="button" onClick={() => onSelectIndicator(null)}>
+            Back
+          </button>
+          <button className="secondary-button" type="button" onClick={loadMacroData} disabled={isQuadrupleWitching}>
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div className="macro-content">
@@ -389,6 +527,51 @@ function MacroPanel() {
         )}
       </div>
     </section>
+  );
+}
+
+function IndicatorCardGrid({ selectedValue, onSelect }) {
+  return (
+    <div className="indicator-board">
+      <div className="indicator-board-header">
+        <span>Indicators</span>
+        <strong>Macro watchlist</strong>
+      </div>
+
+      <div className="indicator-card-grid">
+        {MACRO_INDICATORS.map((item) => {
+          const isSelected = item.value === selectedValue;
+
+          return (
+            <button
+              className={isSelected ? "indicator-card indicator-card-active" : "indicator-card"}
+              key={item.value}
+              type="button"
+              onClick={() => onSelect(item.value)}
+              aria-pressed={isSelected}
+            >
+              <div className="indicator-tags">
+                {item.tags.map((tag) => (
+                  <span className="indicator-tag" key={tag}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <div className="indicator-card-body">
+                <strong>{item.label}</strong>
+                <p>{item.description}</p>
+              </div>
+
+              <div className="indicator-card-footer">
+                <span>{item.cadence}</span>
+                <span>{item.source}</span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
