@@ -255,10 +255,6 @@ def yahoo_stock_history(symbol: str, period: str = "6mo", interval: str = "1d") 
     }
 
 
-def stock_history(symbol: str, period: str = "6mo", interval: str = "1d") -> dict:
-    """Deprecated compatibility wrapper. Use yahoo_stock_history instead."""
-    return yahoo_stock_history(symbol, period, interval)
-
 
 def company_overview(symbol: str) -> dict:
     """Get company profile and fundamental summary data from Alpha Vantage.
@@ -329,12 +325,13 @@ def earnings_calendar(symbol: str = "", horizon: str = "3month") -> dict:
     }
 
 
-def economic_indicator(indicator: str, interval: str = "monthly") -> dict:
+def economic_indicator(indicator: str, interval: str = "monthly", limit: int = 120) -> dict:
     """Get a macroeconomic indicator from Alpha Vantage.
 
     Args:
         indicator: One of CPI, FEDERAL_FUNDS_RATE, UNEMPLOYMENT, NONFARM_PAYROLL, INFLATION, RETAIL_SALES.
         interval: monthly, quarterly, or annual where supported by the endpoint.
+        limit: Maximum number of rows to return after sorting by date.
     """
     normalized = indicator.strip().upper()
     supported = {
@@ -363,10 +360,13 @@ def economic_indicator(indicator: str, interval: str = "monthly") -> dict:
         return {"indicator": normalized, "source": "alpha_vantage", **payload}
 
     data = payload.get("data", [])
+    sorted_data = sorted(data, key=lambda row: row.get("date", ""))
+    limited_data = sorted_data[-limit:] if limit > 0 else sorted_data
     return {
         "indicator": normalized,
         "interval": interval if normalized != "INFLATION" else "annual",
         "source": "alpha_vantage",
         "rows": len(data),
-        "recent_data": data[:12],
+        "data": limited_data,
+        "recent_data": limited_data[-12:],
     }

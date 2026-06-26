@@ -4,11 +4,12 @@ import json
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Lock
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from pydantic_ai.messages import ModelMessage
 
 from agent_core import format_api_error, run_agent
+from tools import economic_indicator
 
 HOST = "127.0.0.1"
 PORT = 8000
@@ -41,9 +42,14 @@ class AgentRequestHandler(BaseHTTPRequestHandler):
         self._send_json(204, {})
 
     def do_GET(self) -> None:
-        path = urlparse(self.path).path
+        parsed_url = urlparse(self.path)
+        path = parsed_url.path
         if path == "/health":
             self._send_json(200, {"ok": True})
+            return
+
+        if path == "/macro":
+            self._handle_macro(parsed_url.query)
             return
 
         self._send_json(404, {"error": "Not found"})
@@ -98,6 +104,23 @@ class AgentRequestHandler(BaseHTTPRequestHandler):
                 histories.pop(session_id, None)
 
         self._send_json(200, {"ok": True})
+
+    def _handle_macro(self, query: str) -> None:
+        params = parse_qs(query)
+        indicator = params.get("indicator", ["CPI"])[0]
+        interval = params.get("interval", ["monthly"])[0]
+
+        try:
+            limit = int(params.get("limit", ["120"])[0])
+        except ValueError:
+            limit = 120
+
+        result = economic_indicator(indicator=indicator, interval=interval, limit=limit)
+        if "error_type" in result:
+            self._send_json(400, {"error": result})
+            return
+
+        self._send_json(200, result)
 
 
 def main() -> None:
